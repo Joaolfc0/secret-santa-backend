@@ -144,3 +144,30 @@ func TestDeleteGroup_NotFound(t *testing.T) {
 
 	assert.Equal(t, ctx.Writer.Status(), http.StatusNotFound)
 }
+
+func TestGetMyMatch_EmptyUsername(t *testing.T) {
+	_, ctx := functions.PrepareCtx("GET")
+	ctx.Params = []gin.Param{{Key: "id", Value: "1"}}
+	ctx.Request.URL.RawQuery = "username="
+
+	mockCtrl, mockServices := setupTest(t)
+	defer mockCtrl.Finish()
+
+	handler := NewGroupHandler(mockServices)
+	handler.GetMyMatch(ctx)
+
+	assert.Equal(t, ctx.Writer.Status(), http.StatusBadRequest)
+}
+
+func TestGetMyMatch_EmptyGroup(t *testing.T) {
+	_, ctx := functions.PrepareCtx("GET")
+	ctx.Request.URL.RawQuery = "username=testuser"
+
+	mockCtrl, mockServices := setupTest(t)
+	defer mockCtrl.Finish()
+
+	handler := NewGroupHandler(mockServices)
+	handler.GetMyMatch(ctx)
+
+	assert.Equal(t, ctx.Writer.Status(), http.StatusBadRequest)
+}

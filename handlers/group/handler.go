@@ -244,6 +244,7 @@ func (r *resource) GetMyMatch(c *gin.Context) {
 	if id == "" {
 		customErr := customError.NewCustomError(customError.WithBadRequest("Group id is empty", "Invalid request params"))
 		c.JSON(customErr.Status, customErr)
+		return
 	}
 
 	match, err := r.svc.GetMyMatch(id, username)
