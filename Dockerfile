@@ -1,28 +1,34 @@
-FROM golang:1.22-alpine as build
+# syntax=docker/dockerfile:1
 
+# Etapa de build
+FROM golang:1.22 AS builder
+
+# Defina o diretório de trabalho no contêiner
 WORKDIR /app
 
-# COPY /root/* /root/
+# Copie arquivos de dependências
+COPY go.mod go.sum ./
 
-ENV GOPRIVATE=github.com/be-growth
-
-RUN apk update && apk upgrade && apk add git
-
-RUN git config --global url."https://"$( cat /root/token )":x-oauth-basic@github.com/".insteadOf "https://github.com/"
-
-COPY go.mod ./
-COPY go.sum ./
+# Baixe as dependências
 RUN go mod download
 
+# Copie o restante dos arquivos
 COPY . .
 
-RUN go build main.go
+# Compile a aplicação
+RUN CGO_ENABLED=0 GOOS=linux go build -o /app/main
 
-FROM alpine:3.14
+# Etapa de execução
+FROM gcr.io/distroless/static:nonroot
+
+# Defina o diretório de trabalho
 WORKDIR /app
 
-COPY --from=build /app/main /app/main
+# Copie o binário da etapa de build
+COPY --from=builder /app/main .
 
-EXPOSE ${PORT}
+# Exponha a porta usada pela aplicação
+EXPOSE 8080
 
-CMD [ "./main" ]
+# Comando para iniciar a aplicação
+CMD ["./main"]

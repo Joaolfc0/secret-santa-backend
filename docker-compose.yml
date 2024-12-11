@@ -1,27 +1,26 @@
-version: "1.0"
-
 services:
-  service-secret-santa:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: app_container
     ports:
-      - ${PORT}:${PORT}
-    networks:
-      - app-network
-    env_file:
-      - .env
+      - "8080:8080"
     environment:
-      MONGO_URI: "${MONGO_CONNECTION_STRING}://${MONGO_USER}:${MONGO_PASSWORD}@mongo/?retryWrites=true&w=majority"
+      - MONGO_URI=mongodb://mongo:27017/${MONGO_DB}
+      - PORT=${PORT}
+      - ENVIRONMENT=${ENVIRONMENT}
+      - SWAGGER_HOST=${SWAGGER_HOST}
+    depends_on:
+      - mongo
+
   mongo:
-    image: mongo:6.0.13
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    image: mongo:6.0
+    container_name: mongo_container
     ports:
-      - ${MONGO_PORT}:${MONGO_PORT}
-    networks:
-      - app-network
-networks:
-  app-network:
-    driver: bridge
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
