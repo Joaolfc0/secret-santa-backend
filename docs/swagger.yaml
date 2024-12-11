@@ -1,0 +1,235 @@
+basePath: /secret-santa
+definitions:
+  models.AddParticipantRequest:
+    properties:
+      participant:
+        type: string
+    required:
+    - participant
+    type: object
+  models.Group:
+    properties:
+      name:
+        example: Equipe pe no chao
+        type: string
+      participants:
+        example:
+        - joao
+        - mari
+        items:
+          type: string
+        type: array
+    type: object
+externalDocs:
+  description: ReadMe
+info:
+  contact: {}
+  description: Service the secret santa website.
+  termsOfService: http://swagger.io/terms/
+  title: Service Secret Santa
+  version: "1.0"
+paths:
+  /group:
+    get:
+      description: Retrieve a list of all groups
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Group'
+            type: array
+        "500":
+          description: '{"error": "Internal Server Error."}'
+      summary: Get all groups
+      tags:
+      - group
+    post:
+      consumes:
+      - application/json
+      description: Create a new group with a name
+      parameters:
+      - description: Group object
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.Group'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Group'
+        "400":
+          description: '{"error": "Bad Request."}'
+        "500":
+          description: '{"error": "Internal Server Error."}'
+      summary: Create a new group
+      tags:
+      - group
+  /group/{id}:
+    delete:
+      description: Delete a specific group by its ID
+      parameters:
+      - description: Group ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: '{}'
+        "404":
+          description: '{"error": "Not Found."}'
+        "500":
+          description: '{"error": "Internal Server Error."}'
+      summary: Delete a group
+      tags:
+      - group
+    get:
+      description: Retrieve details of a specific group by its ID
+      parameters:
+      - description: Group ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Group'
+        "404":
+          description: '{"error": "Not Found."}'
+        "500":
+          description: '{"error": "Internal Server Error."}'
+      summary: Get a group by ID
+      tags:
+      - group
+    put:
+      consumes:
+      - application/json
+      description: Update details of a specific group
+      parameters:
+      - description: Group ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated group object
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.Group'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Group'
+        "400":
+          description: '{"error": "Bad Request."}'
+        "404":
+          description: '{"error": "Not Found."}'
+        "500":
+          description: '{"error": "Internal Server Error."}'
+      summary: Update a group
+      tags:
+      - group
+  /group/{id}/add-participant:
+    post:
+      consumes:
+      - application/json
+      description: Add a new participant to an existing group
+      parameters:
+      - description: Group ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Participant to add
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddParticipantRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Group'
+        "400":
+          description: '{"error": "Bad Request."}'
+        "404":
+          description: '{"error": "Not Found."}'
+        "500":
+          description: '{"error": "Internal Server Error."}'
+      summary: Add a participant to a group
+      tags:
+      - group
+  /group/{id}/match-participants:
+    post:
+      description: Generate secret matches for participants in a group
+      parameters:
+      - description: Group ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Group'
+        "400":
+          description: '{"error": "Bad Request."}'
+        "404":
+          description: '{"error": "Not Found."}'
+        "500":
+          description: '{"error": "Internal Server Error."}'
+      summary: Match participants in a group
+      tags:
+      - group
+  /group/{id}/my-match:
+    get:
+      description: Retrieve the participant you are matched to gift in a group
+      parameters:
+      - description: Group ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Participant username
+        in: query
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: string
+        "400":
+          description: '{"error": "Bad Request."}'
+        "404":
+          description: '{"error": "Not Found."}'
+        "500":
+          description: '{"error": "Internal Server Error."}'
+      summary: Get the match for a participant
+      tags:
+      - group
+swagger: "2.0"

@@ -1,0 +1,27 @@
+version: "1.0"
+
+services:
+  service-secret-santa:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - ${PORT}:${PORT}
+    networks:
+      - app-network
+    env_file:
+      - .env
+    environment:
+      MONGO_URI: "${MONGO_CONNECTION_STRING}://${MONGO_USER}:${MONGO_PASSWORD}@mongo/?retryWrites=true&w=majority"
+  mongo:
+    image: mongo:6.0.13
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    ports:
+      - ${MONGO_PORT}:${MONGO_PORT}
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
