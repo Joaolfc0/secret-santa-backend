@@ -16,6 +16,17 @@ type Group struct {
 	UpdatedAt    time.Time          `json:"updateAt" bson:"updateAt, omitempty" swaggerignore:"true"`
 }
 
+func CreateMockGroup() *Group {
+	return &Group{
+		Id:           primitive.NewObjectID(),
+		Name:         "Test Group",
+		Participants: []Participant{{Name: "Mari", Email: "mari@gmail.com"}},
+		Matches:      []Match{{First: "joao", Second: "mari"}},
+		CreatedAt:    time.Date(2023, 12, 11, 0, 0, 0, 0, time.UTC),
+		UpdatedAt:    time.Date(2023, 12, 11, 0, 0, 0, 0, time.UTC),
+	}
+}
+
 type Participant struct {
 	Name  string `json:"name" bson:"name" example:"Mari"`
 	Email string `json:"email" bson:"email" example:"Mari@gmail.com"`
