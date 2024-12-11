@@ -65,7 +65,7 @@ func (r *resource) MatchParticipants(id string) (*models.Group, *customError.Cus
 
 	var matches []models.Match
 
-	rand.Seed(time.Now().UnixNano())
+	randGen := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	for _, participant := range group.Participants {
 		// Filtra a lista de participantes restantes para excluir o próprio participante
@@ -82,7 +82,7 @@ func (r *resource) MatchParticipants(id string) (*models.Group, *customError.Cus
 		}
 
 		// Seleciona um participante aleatório
-		randomIndex := rand.Intn(len(filtered))
+		randomIndex := randGen.Intn(len(filtered))
 		match := filtered[randomIndex]
 
 		// Remove o participante selecionado da lista de participantes restantes

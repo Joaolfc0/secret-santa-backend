@@ -1,24 +1,23 @@
 basePath: /secret-santa
 definitions:
-  models.AddParticipantRequest:
-    properties:
-      participant:
-        type: string
-    required:
-    - participant
-    type: object
   models.Group:
     properties:
       name:
         example: Equipe pe no chao
         type: string
       participants:
-        example:
-        - joao
-        - mari
         items:
-          type: string
+          $ref: '#/definitions/models.Participant'
         type: array
+    type: object
+  models.Participant:
+    properties:
+      email:
+        example: Mari@gmail.com
+        type: string
+      name:
+        example: Mari
+        type: string
     type: object
 externalDocs:
   description: ReadMe
@@ -162,7 +161,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/models.AddParticipantRequest'
+          $ref: '#/definitions/models.Participant'
       produces:
       - application/json
       responses:

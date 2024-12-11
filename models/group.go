@@ -10,7 +10,7 @@ import (
 type Group struct {
 	Id           primitive.ObjectID `json:"id" bson:"_id,omitempty" swaggerignore:"true"`
 	Name         string             `json:"name" bson:"name" example:"Equipe pe no chao"`
-	Participants []Participant      `json:"participants" bson:"participants" example:"joao,mari"`
+	Participants []Participant      `json:"participants" bson:"participants" `
 	Matches      []Match            `json:"matches" bson:"matches"  swaggerignore:"true"`
 	CreatedAt    time.Time          `json:"createdAt" bson:"createdAt, omitempty" swaggerignore:"true"`
 	UpdatedAt    time.Time          `json:"updateAt" bson:"updateAt, omitempty" swaggerignore:"true"`

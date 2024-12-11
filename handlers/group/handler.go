@@ -161,7 +161,7 @@ func (r *resource) DeleteGroup(c *gin.Context) {
 // @Accept  	json
 // @Produce  	json
 // @Param 		id 			path 		string 		true 	"Group ID"
-// @Param 		body 		body 		models.AddParticipantRequest true "Participant to add"
+// @Param 		body 		body 		models.Participant true "Participant to add"
 // @Success 	200 		{object} 	models.Group
 // @Failure		400 		"{"error": "Bad Request."}"
 // @Failure		404 		"{"error": "Not Found."}"

@@ -220,7 +220,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.AddParticipantRequest"
+                            "$ref": "#/definitions/models.Participant"
                         }
                     }
                 ],
@@ -325,17 +325,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.AddParticipantRequest": {
-            "type": "object",
-            "required": [
-                "participant"
-            ],
-            "properties": {
-                "participant": {
-                    "type": "string"
-                }
-            }
-        },
         "models.Group": {
             "type": "object",
             "properties": {
@@ -346,12 +335,21 @@ const docTemplate = `{
                 "participants": {
                     "type": "array",
                     "items": {
-                        "type": "string"
-                    },
-                    "example": [
-                        "joao",
-                        "mari"
-                    ]
+                        "$ref": "#/definitions/models.Participant"
+                    }
+                }
+            }
+        },
+        "models.Participant": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "Mari@gmail.com"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Mari"
                 }
             }
         }

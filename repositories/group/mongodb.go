@@ -32,6 +32,11 @@ func NewGroupRepository(db *mongo.Client) Repository {
 
 func (r *resource) CreateGroup(group *models.Group) (*models.Group, *customError.CustomError) {
 	collection := r.db.Database(config.Cfg.MongoDB).Collection("groups")
+
+	if group.Participants == nil {
+		group.Participants = []models.Participant{}
+	}
+
 	result, err := collection.InsertOne(context.Background(), group)
 	if err != nil {
 		return nil, customError.NewCustomError(customError.WithInternalServerError(err.Error(), "Failed to create group"))
