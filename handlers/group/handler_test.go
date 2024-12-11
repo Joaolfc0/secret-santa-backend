@@ -37,13 +37,13 @@ func TestCreateGroup_Success(t *testing.T) {
 	handler := NewGroupHandler(mockServices)
 	handler.CreateGroup(ctx)
 
-	var res models.Group
-	functions.GetRespBody(w, &res)
+	var response models.Group
+	functions.GetRespBody(w, &response)
 
 	assert.Equal(t, ctx.Writer.Status(), http.StatusCreated)
-	assert.Equal(t, group.Id, res.Id)
-	assert.Equal(t, group.Name, res.Name)
-	assert.Equal(t, len(group.Participants), len(res.Participants))
+	assert.Equal(t, group.Id, response.Id)
+	assert.Equal(t, group.Name, response.Name)
+	assert.Equal(t, len(group.Participants), len(response.Participants))
 }
 
 func TestCreateGroup_ServiceError(t *testing.T) {
@@ -91,11 +91,11 @@ func TestGetGroup_Success(t *testing.T) {
 	handler.GetGroup(ctx)
 
 	assert.Equal(t, ctx.Writer.Status(), http.StatusOK)
-	var res models.Group
-	functions.GetRespBody(w, &res)
-	assert.Equal(t, expectedGroup.Id, res.Id)
-	assert.Equal(t, expectedGroup.Name, res.Name)
-	assert.Equal(t, len(expectedGroup.Participants), len(res.Participants))
+	var response models.Group
+	functions.GetRespBody(w, &response)
+	assert.Equal(t, expectedGroup.Id, response.Id)
+	assert.Equal(t, expectedGroup.Name, response.Name)
+	assert.Equal(t, len(expectedGroup.Participants), len(response.Participants))
 }
 
 func TestGetGroup_NotFound(t *testing.T) {
