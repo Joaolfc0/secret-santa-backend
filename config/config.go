@@ -11,7 +11,7 @@ type Config struct {
 	Environment string `env:"ENVIRONMENT" envDefault:"dev"`
 	Port        string `env:"PORT" envDefault:"8080"`
 	SwaggerHost string `env:"SWAGGER_HOST" envDefault:"localhost:8080"`
-	MongoURI    string `env:"MONGO_URI" envDefault:"mongodb+srv://joaolfcerqueira:n8z7v8m9@cluster0.klitnkq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"`
+	MongoURI    string `env:"MONGO_URI" envDefault:""`
 	MongoDB     string `env:"MONGO_DB" envDefault:"secret-santa"`
 }
 
