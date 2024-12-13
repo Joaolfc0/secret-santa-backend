@@ -3,6 +3,7 @@ package group
 import (
 	"math/rand"
 	"service-secret-santa/customError"
+	"service-secret-santa/functions"
 	"service-secret-santa/models"
 	"service-secret-santa/repositories/group"
 	"time"
@@ -58,45 +59,18 @@ func (r *resource) MatchParticipants(id string) (*models.Group, *customError.Cus
 	}
 
 	// Mapeia os nomes dos participantes
-	remainingParticipants := make([]string, len(group.Participants))
-	for i, participant := range group.Participants {
-		remainingParticipants[i] = participant.Name
+	remainingParticipants := make(map[string]struct{})
+	for _, participant := range group.Participants {
+		remainingParticipants[participant.Name] = struct{}{}
 	}
 
 	var matches []models.Match
+	matchIndexes := functions.RandomDerangement(len(group.Participants), rand.New(rand.NewSource(time.Now().UnixNano())))
 
-	randGen := rand.New(rand.NewSource(time.Now().UnixNano()))
-
-	for _, participant := range group.Participants {
-		// Filtra a lista de participantes restantes para excluir o próprio participante
-		filtered := make([]string, 0)
-		for _, name := range remainingParticipants {
-			if name != participant.Name {
-				filtered = append(filtered, name)
-			}
-		}
-
-		// Verifica se há participantes disponíveis para match
-		if len(filtered) == 0 {
-			return nil, customError.NewCustomError(customError.WithInternalServerError("Matching failed", "Could not generate unique matches"))
-		}
-
-		// Seleciona um participante aleatório
-		randomIndex := randGen.Intn(len(filtered))
-		match := filtered[randomIndex]
-
-		// Remove o participante selecionado da lista de participantes restantes
-		for i, name := range remainingParticipants {
-			if name == match {
-				remainingParticipants = append(remainingParticipants[:i], remainingParticipants[i+1:]...)
-				break
-			}
-		}
-
-		// Cria um novo match
+	for i, participant := range group.Participants {
 		matches = append(matches, models.Match{
 			First:  participant.Name,
-			Second: match,
+			Second: group.Participants[matchIndexes[i]].Name,
 		})
 	}
 
