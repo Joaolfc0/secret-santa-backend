@@ -51,13 +51,11 @@ jobs:
         with:
           go-version: "1.22"
 
-      - name: Install Docker on macOS
-        if: runner.os == 'macOS'
+      - name: Setup docker (missing on MacOS)
+        if: runner.os == 'macos'
         run: |
-          brew install --cask docker
-          open /Applications/Docker.app
-          sleep 10
-          while (! docker info > /dev/null 2>&1); do echo "Waiting for Docker to start..."; sleep 5; done
+          brew install docker
+          colima start
 
       - name: Verify Docker Installation
         run: docker --version
