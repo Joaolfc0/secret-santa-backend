@@ -56,7 +56,7 @@ jobs:
         run: |
           brew install --cask docker
           brew install colima
-          colima start --daemon
+          colima start
           echo "Waiting for Colima to start..."
           while ! docker system info > /dev/null 2>&1; do
             sleep 5
