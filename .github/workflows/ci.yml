@@ -62,6 +62,7 @@ jobs:
             sleep 5
           done
           echo "Colima started and Docker is ready."
+          export DOCKER_HOST=unix:///$HOME/.colima/docker.sock
 
       - name: Run Integration Tests
         run: go test -v ./integration_tests/...
