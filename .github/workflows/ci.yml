@@ -55,7 +55,6 @@ jobs:
         if: runner.os == 'macos'
         run: |
           brew install docker
-          colima start
 
       - name: Verify Docker Installation
         run: docker --version
