@@ -65,7 +65,7 @@ jobs:
           sudo chmod +x /usr/local/bin/docker-compose
 
       - name: Start Database
-        run: docker-compose up -d db
+        run: docker-compose up -d mongo
         if: runner.os == 'Linux' || runner.os == 'macOS'
 
       - name: Wait for services
