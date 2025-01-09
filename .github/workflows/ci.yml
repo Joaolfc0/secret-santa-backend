@@ -62,7 +62,12 @@ jobs:
             sleep 5
           done
           echo "Colima started and Docker is ready."
-          export DOCKER_HOST=unix:///$HOME/.colima/docker.sock
+
+      - name: Set DOCKER_HOST for Colima (macOS)
+        if: runner.os == 'macos'
+        run: |
+          ls /Users/runner/.colima/default/docker.sock
+          echo "export DOCKER_HOST=unix:///Users/runner/.colima/default/docker.sock" >> $GITHUB_ENV
 
       - name: Run Integration Tests
         run: go test -v ./integration_tests/...
