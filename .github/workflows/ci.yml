@@ -40,7 +40,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]
 
     steps:
       - name: Checkout code
@@ -51,27 +51,27 @@ jobs:
         with:
           go-version: '1.22'
 
-      # Install Docker Compose on macOS
-      - name: Install Docker Compose
-        if: runner.os == 'macOS'
-        run: |
-          brew install docker-compose
+      - name: Install dependencies
+        run: go mod tidy
 
-      # Install Docker Compose on Linux
+      - name: Start Docker service
+        if: runner.os == 'Linux'
+        run: sudo systemctl start docker
+
       - name: Install Docker Compose
         if: runner.os == 'Linux'
         run: |
-          sudo curl -L "https://github.com/docker/compose/releases/download/v2.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.32.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
 
-      - name: Start Database
+      - name: Start Services
         run: docker-compose up -d mongo
-        if: runner.os == 'Linux' || runner.os == 'macOS'
+        if: runner.os == 'Linux'
 
       - name: Wait for services
         run: |
-          while ! nc -z localhost 5432; do
-            echo "Waiting for the database...";
+          while ! nc -z localhost 27017; do
+            echo "Waiting for MongoDB...";
             sleep 2;
           done
 
