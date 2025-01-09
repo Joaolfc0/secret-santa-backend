@@ -9,13 +9,12 @@ on:
       - main
 
 jobs:
-  unit-test:
-    name: Run Unit Tests
+  test:
+    name: Run Tests
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        go-version: [1.22]
 
     steps:
       - name: Checkout code
@@ -24,7 +23,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: ${{ matrix.go-version }}
+          go-version: '1.22'
 
       - name: Install dependencies
         run: go mod tidy
@@ -42,22 +41,24 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        go-version: [1.22]
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: ${{ matrix.go-version }}
+          go-version: "1.22"
 
-      - name: Start MongoDB
-        uses: DigiPie/mongo-action@v2.0.1
+      - name: Setup docker (missing on MacOS)
+        if: runner.os == 'macos'
+        run: |
+          brew install docker
+          colima start
 
-      - name: Install dependencies
-        run: go mod tidy
-            
+      - name: Verify Docker Installation
+        run: docker --version
+
       - name: Run Integration Tests
         run: go test -v ./integration_tests/...
