@@ -56,6 +56,7 @@ jobs:
         run: |
           brew install --cask docker
           brew install colima
+          export DOCKER_HOST=unix:///var/run/docker.sock
           brew services start colima
           docker ps
 
