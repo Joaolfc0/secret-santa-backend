@@ -57,6 +57,7 @@ jobs:
           brew install --cask docker
           brew install colima
           brew services start colima
+          docker ps
 
       - name: Run Integration Tests
         run: go test -v ./integration_tests/...
