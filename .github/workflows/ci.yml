@@ -53,15 +53,10 @@ jobs:
 
       - name: Set up Docker
         if: runner.os == 'macos'
-        uses: docker-practice/actions-setup-docker@v1
-        timeout-minutes: 10
-        with:
-          docker_version: "20.0"
-          docker_channel: stable
+        run: |
+          sudo hdiutil attach Docker.dmg
+          sudo /Volumes/Docker/Docker.app/Contents/MacOS/install
+          sudo hdiutil detach /Volumes/Docker
 
       - name: Run Integration Tests
         run: go test -v ./integration_tests/...
-
-      - name: Colima Logs
-        if: failure()
-        run: colima status
