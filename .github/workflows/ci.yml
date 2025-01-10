@@ -51,13 +51,23 @@ jobs:
         with:
           go-version: "1.22"
 
-      - name: Set up Docker
+      - name: Setup Docker (macOS)
         if: runner.os == 'macos'
         run: |
-          sudo wget https://desktop.docker.com/mac/main/arm64/179585/Docker.dmg
-          sudo hdiutil attach Docker.dmg
-          sudo /Volumes/Docker/Docker.app/Contents/MacOS/install
-          sudo hdiutil detach /Volumes/Docker
+          brew install --cask docker
+          brew install colima
+          colima start
+          echo "Waiting for Colima to start..."
+          while ! docker system info > /dev/null 2>&1; do
+            sleep 5
+          done
+          echo "Colima started and Docker is ready."
+
+      - name: Set DOCKER_HOST for Colima (macOS)
+        if: runner.os == 'macos'
+        run: |
+          ls /Users/runner/.colima/default/docker.sock
+          echo "export DOCKER_HOST=unix:///Users/runner/.colima/default/docker.sock" >> $GITHUB_ENV
 
       - name: Run Integration Tests
         run: go test -v ./integration_tests/...
