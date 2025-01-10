@@ -54,6 +54,7 @@ jobs:
       - name: Set up Docker
         if: runner.os == 'macos'
         run: |
+          sudo wget https://desktop.docker.com/mac/main/arm64/179585/Docker.dmg
           sudo hdiutil attach Docker.dmg
           sudo /Volumes/Docker/Docker.app/Contents/MacOS/install
           sudo hdiutil detach /Volumes/Docker
