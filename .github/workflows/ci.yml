@@ -68,8 +68,14 @@ jobs:
 
       - name: Install docker
         run: |
-          brew install docker
-          brew install docker-compose
+          brew install docker docker-compose
+
+      - name: Start Docker Service
+        run: |
+          open /Applications/Docker.app
+          echo "Waiting for Docker to start..."
+          while ! docker info > /dev/null 2>&1; do sleep 1; done
+          echo "Docker is running."
 
       - name: Run Integration Tests
         run: go test -v ./integration_tests/...
