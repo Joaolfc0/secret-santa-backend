@@ -40,7 +40,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-13]
 
     steps:
       - name: Checkout code
@@ -51,10 +51,23 @@ jobs:
         with:
           go-version: "1.22"
 
+      - name: Setup Docker (macOS)
+        if: runner.os == 'macos'
+        run: |
+          brew install --cask docker
+          brew install colima
+          colima start
+          echo "Waiting for Colima to start..."
+          while ! docker system info > /dev/null 2>&1; do
+            sleep 5
+          done
+          echo "Colima started and Docker is ready."
+
+      - name: Set DOCKER_HOST for Colima (macOS)
+        if: runner.os == 'macos'
+        run: |
+          ls /Users/runner/.colima/default/docker.sock
+          echo "export DOCKER_HOST=unix:///Users/runner/.colima/default/docker.sock" >> $GITHUB_ENV
+
       - name: Run Integration Tests
-        uses: cloudposse/github-action-docker-compose-test-run@main
-        with:
-          registry: 
-          file: docker-compose.yml
-          service: app
-          command: go test -v ./integration_tests/...
+        run: go test -v ./integration_tests/...
