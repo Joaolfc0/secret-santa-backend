@@ -55,12 +55,22 @@ func TestMain(m *testing.M) {
 		log.Fatalf("Could not connect to Docker: %s", err)
 	}
 
+	err = pool.Client.Ping()
+	if err != nil {
+		log.Fatalf("Could not connect to Docker: %s", err)
+	}
+
 	resource, err := pool.RunWithOptions(&dockertest.RunOptions{
 		Repository: "mongo",
 		Tag:        "4.4.10",
 		PortBindings: map[docker.Port][]docker.PortBinding{
 			"27017/tcp": {{HostPort: "27017"}},
 		},
+	}, func(config *docker.HostConfig) {
+		config.AutoRemove = true
+		config.RestartPolicy = docker.RestartPolicy{
+			Name: "no",
+		}
 	})
 	if err != nil {
 		log.Fatalf("Could not start resource: %s", err)
