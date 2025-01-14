@@ -41,11 +41,6 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-13]
-    services:
-      dind:
-        image: docker:23.0-rc-dind-rootless
-        ports:
-          - 2375:2375
 
     steps:
       - name: Checkout code
@@ -57,4 +52,9 @@ jobs:
           go-version: "1.22"
 
       - name: Run Integration Tests
-        run: go test -v ./integration_tests/...
+        uses: cloudposse/github-action-docker-compose-test-run@main
+        with:
+          registry: 
+          file: docker-compose.yml
+          service: app
+          command: go test -v ./integration_tests/...
