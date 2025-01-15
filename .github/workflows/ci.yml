@@ -53,29 +53,3 @@ jobs:
 
       - name: Run Integration Tests
         run: go test -v ./integration_tests/...
-
-  integration-test-macos:
-    runs-on: macos-13
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: "1.22"
-
-      - name: Install docker
-        run: |
-          brew install docker docker-compose
-
-      - name: Start Docker Service
-        run: |
-          open /Applications/Docker.app
-          echo "Waiting for Docker to start..."
-          while ! docker info > /dev/null 2>&1; do sleep 1; done
-          echo "Docker is running."
-
-      - name: Run Integration Tests
-        run: go test -v ./integration_tests/...
