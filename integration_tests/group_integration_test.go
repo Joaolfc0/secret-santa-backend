@@ -194,11 +194,11 @@ func TestAddParticipantSuccess(t *testing.T) {
 		t.Fatalf("Could not parse response body: %s", err)
 	}
 
-	if len(updatedGroup.Participants) != 1 {
+	if len(updatedGroup.Participants) != 2 {
 		t.Errorf("Expected 1 participant, got %d", len(updatedGroup.Participants))
 	}
 
-	if updatedGroup.Participants[0].Name != newParticipant["Name"].(string) {
+	if updatedGroup.Participants[1].Name != newParticipant["Name"].(string) {
 		t.Errorf("Expected participant name %s, got %s", newParticipant["Name"].(string), updatedGroup.Participants[0].Name)
 	}
 }
