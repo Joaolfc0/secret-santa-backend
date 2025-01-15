@@ -16,9 +16,11 @@ type Group struct {
 	UpdatedAt    time.Time          `json:"updateAt" bson:"updateAt, omitempty" swaggerignore:"true"`
 }
 
+var mockGroupID = primitive.NewObjectID()
+
 func CreateMockGroup() *Group {
 	return &Group{
-		Id:           primitive.NewObjectID(),
+		Id:           mockGroupID,
 		Name:         "Test Group",
 		Participants: []Participant{{Name: "Mari", Email: "mari@gmail.com"}},
 		Matches:      []Match{{First: "joao", Second: "mari"}},
