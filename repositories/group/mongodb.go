@@ -55,9 +55,11 @@ func (r *resource) GetGroupByID(id string) (*models.Group, *customError.CustomEr
 	if err != nil {
 		return nil, customError.NewCustomError(customError.WithBadRequest("Invalid group ID", "Invalid ID format"))
 	}
+	fmt.Println("objecID:" + objectID.Hex())
 
 	var group models.Group
 	err = collection.FindOne(context.Background(), bson.M{"_id": objectID}).Decode(&group)
+	fmt.Println("erro:" + err.Error())
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, customError.NewCustomError(customError.WithNotFound("Group not found", "No group found with the given ID"))
