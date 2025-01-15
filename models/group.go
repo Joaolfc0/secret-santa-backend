@@ -16,7 +16,10 @@ type Group struct {
 	UpdatedAt    time.Time          `json:"updateAt" bson:"updateAt, omitempty" swaggerignore:"true"`
 }
 
-var mockGroupID = primitive.NewObjectID()
+var mockGroupID = func() primitive.ObjectID {
+	id, _ := primitive.ObjectIDFromHex("6787c4a755ea623ab45e77d4")
+	return id
+}()
 
 func CreateMockGroup() *Group {
 	return &Group{
