@@ -89,6 +89,8 @@ func TestMain(m *testing.M) {
 	handler = handlers.NewGroupHandler(groupSvc)
 	router = setupRouter()
 
+	collection := dbClient.Database(config.Cfg.MongoDB).Collection("groups")
+	collection.InsertOne(context.TODO(), models.CreateMockGroup())
 	code := m.Run()
 
 	if err := pool.Purge(resource); err != nil {
@@ -126,21 +128,8 @@ func TestCreateGroupSuccess(t *testing.T) {
 }
 
 func TestGetGroupByIDSuccess(t *testing.T) {
-	newGroup := map[string]interface{}{
-		"Name": "Amigos do Futebol",
-	}
-	w := executeRequest("POST", "/secret-santa/group", newGroup)
-
-	if w.Code != http.StatusCreated {
-		t.Fatalf("Failed to create group for test, got status %d", w.Code)
-	}
-
-	var createdGroup models.Group
-	if err := json.Unmarshal(w.Body.Bytes(), &createdGroup); err != nil {
-		t.Fatalf("Could not parse response body: %s", err)
-	}
-
-	w = executeRequest("GET", "/secret-santa/group/"+createdGroup.Id.Hex(), nil)
+	newGroup := models.CreateMockGroup()
+	w := executeRequest("GET", "/secret-santa/group/"+newGroup.Id.Hex(), nil)
 
 	if w.Code != http.StatusOK {
 		t.Errorf("Expected status code %d, got %d", http.StatusOK, w.Code)
@@ -151,30 +140,14 @@ func TestGetGroupByIDSuccess(t *testing.T) {
 		t.Fatalf("Could not parse response body: %s", err)
 	}
 
-	if fetchedGroup.Name != newGroup["Name"].(string) {
-		t.Errorf("Expected group name %s, got %s", newGroup["Name"].(string), fetchedGroup.Name)
+	if fetchedGroup.Name != newGroup.Name {
+		t.Errorf("Expected group name %s, got %s", newGroup.Name, fetchedGroup.Name)
 	}
 }
 
 func TestUpdateGroupSuccess(t *testing.T) {
-	newGroup := map[string]interface{}{
-		"Name": "Amigos da Escola",
-	}
-	w := executeRequest("POST", "/secret-santa/group", newGroup)
-
-	if w.Code != http.StatusCreated {
-		t.Fatalf("Failed to create group for test, got status %d", w.Code)
-	}
-
-	var createdGroup models.Group
-	if err := json.Unmarshal(w.Body.Bytes(), &createdGroup); err != nil {
-		t.Fatalf("Could not parse response body: %s", err)
-	}
-
-	updatedGroup := map[string]interface{}{
-		"Name": "Amigos do Trabalho Atualizado",
-	}
-	w = executeRequest("PUT", "/secret-santa/group/"+createdGroup.Id.Hex(), updatedGroup)
+	updatedGroup := models.CreateMockGroup()
+	w := executeRequest("PUT", "/secret-santa/group/"+updatedGroup.Id.Hex(), updatedGroup)
 
 	if w.Code != http.StatusOK {
 		t.Errorf("Expected status code %d, got %d", http.StatusOK, w.Code)
@@ -185,27 +158,14 @@ func TestUpdateGroupSuccess(t *testing.T) {
 		t.Fatalf("Could not parse response body: %s", err)
 	}
 
-	if updatedGroupResponse.Name != updatedGroup["Name"].(string) {
-		t.Errorf("Expected group name %s, got %s", updatedGroup["Name"].(string), updatedGroupResponse.Name)
+	if updatedGroupResponse.Name != updatedGroup.Name {
+		t.Errorf("Expected group name %s, got %s", updatedGroup.Name, updatedGroupResponse.Name)
 	}
 }
 
 func TestDeleteGroupSuccess(t *testing.T) {
-	newGroup := map[string]interface{}{
-		"Name": "Amigos do Clube",
-	}
-	w := executeRequest("POST", "/secret-santa/group", newGroup)
-
-	if w.Code != http.StatusCreated {
-		t.Fatalf("Failed to create group for test, got status %d", w.Code)
-	}
-
-	var createdGroup models.Group
-	if err := json.Unmarshal(w.Body.Bytes(), &createdGroup); err != nil {
-		t.Fatalf("Could not parse response body: %s", err)
-	}
-
-	w = executeRequest("DELETE", "/secret-santa/group/"+createdGroup.Id.Hex(), nil)
+	createdGroup := models.CreateMockGroup()
+	w := executeRequest("DELETE", "/secret-santa/group/"+createdGroup.Id.Hex(), nil)
 
 	if w.Code != http.StatusNoContent {
 		t.Errorf("Expected status code %d, got %d", http.StatusNoContent, w.Code)
@@ -219,24 +179,11 @@ func TestDeleteGroupSuccess(t *testing.T) {
 }
 
 func TestAddParticipantSuccess(t *testing.T) {
-	newGroup := map[string]interface{}{
-		"Name": "Amigos da Faculdade",
-	}
-	w := executeRequest("POST", "/secret-santa/group", newGroup)
-
-	if w.Code != http.StatusCreated {
-		t.Fatalf("Failed to create group for test, got status %d", w.Code)
-	}
-
-	var createdGroup models.Group
-	if err := json.Unmarshal(w.Body.Bytes(), &createdGroup); err != nil {
-		t.Fatalf("Could not parse response body: %s", err)
-	}
-
+	createdGroup := models.CreateMockGroup()
 	newParticipant := map[string]interface{}{
 		"Name": "Carlos",
 	}
-	w = executeRequest("POST", "/secret-santa/group/"+createdGroup.Id.Hex()+"/add-participant", newParticipant)
+	w := executeRequest("POST", "/secret-santa/group/"+createdGroup.Id.Hex()+"/add-participant", newParticipant)
 
 	if w.Code != http.StatusOK {
 		t.Errorf("Expected status code %d, got %d", http.StatusOK, w.Code)
