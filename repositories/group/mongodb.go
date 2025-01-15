@@ -64,7 +64,7 @@ func (r *resource) GetGroupByID(id string) (*models.Group, *customError.CustomEr
 		if err == mongo.ErrNoDocuments {
 			groups, cerr := r.GetAllGroups()
 			fmt.Println("todos os grupos: ")
-			fmt.Println(groups)
+			fmt.Println(*groups[0])
 
 			if cerr != nil {
 				fmt.Println("erro: " + cerr.Error())
