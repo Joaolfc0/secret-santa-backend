@@ -68,6 +68,11 @@ func (r *resource) GetGroupByID(id string) (*models.Group, *customError.CustomEr
 	}
 	fmt.Println(group)
 
+	groups, err := r.GetAllGroups()
+	fmt.Println("todos os grupos: ")
+	fmt.Println(groups)
+	fmt.Println("erro: " + err.Error())
+
 	return &group, nil
 }
 
