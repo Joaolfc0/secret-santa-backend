@@ -2,6 +2,7 @@ package group
 
 import (
 	"context"
+	"fmt"
 	"service-secret-santa/config"
 	"service-secret-santa/customError"
 	"service-secret-santa/models"
@@ -48,6 +49,7 @@ func (r *resource) CreateGroup(group *models.Group) (*models.Group, *customError
 
 func (r *resource) GetGroupByID(id string) (*models.Group, *customError.CustomError) {
 	collection := r.db.Database(config.Cfg.MongoDB).Collection("groups")
+	fmt.Println("id procurado: " + id)
 
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -62,6 +64,7 @@ func (r *resource) GetGroupByID(id string) (*models.Group, *customError.CustomEr
 		}
 		return nil, customError.NewCustomError(customError.WithInternalServerError(err.Error(), "Error finding group"))
 	}
+	fmt.Println(group)
 
 	return &group, nil
 }
