@@ -49,27 +49,16 @@ func (r *resource) CreateGroup(group *models.Group) (*models.Group, *customError
 
 func (r *resource) GetGroupByID(id string) (*models.Group, *customError.CustomError) {
 	collection := r.db.Database(config.Cfg.MongoDB).Collection("groups")
-	fmt.Println("id procurado: " + id)
 
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, customError.NewCustomError(customError.WithBadRequest("Invalid group ID", "Invalid ID format"))
 	}
-	fmt.Println("objecID:" + objectID.Hex())
 
 	var group models.Group
 	err = collection.FindOne(context.Background(), bson.M{"_id": objectID}).Decode(&group)
 	if err != nil {
-		fmt.Println("erro:" + err.Error())
 		if err == mongo.ErrNoDocuments {
-			groups, cerr := r.GetAllGroups()
-			fmt.Println("todos os grupos: ")
-			fmt.Println(*groups[0])
-
-			if cerr != nil {
-				fmt.Println("erro: " + cerr.Error())
-			}
-
 			return nil, customError.NewCustomError(customError.WithNotFound("Group not found", "No group found with the given ID"))
 		}
 		return nil, customError.NewCustomError(customError.WithInternalServerError(err.Error(), "Error finding group"))

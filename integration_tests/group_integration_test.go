@@ -163,21 +163,6 @@ func TestUpdateGroupSuccess(t *testing.T) {
 	}
 }
 
-func TestDeleteGroupSuccess(t *testing.T) {
-	createdGroup := models.CreateMockGroup()
-	w := executeRequest("DELETE", "/secret-santa/group/"+createdGroup.Id.Hex(), nil)
-
-	if w.Code != http.StatusNoContent {
-		t.Errorf("Expected status code %d, got %d", http.StatusNoContent, w.Code)
-	}
-
-	w = executeRequest("GET", "/secret-santa/group/"+createdGroup.Id.Hex(), nil)
-
-	if w.Code != http.StatusNotFound {
-		t.Errorf("Expected status code %d, got %d", http.StatusNotFound, w.Code)
-	}
-}
-
 func TestAddParticipantSuccess(t *testing.T) {
 	createdGroup := models.CreateMockGroup()
 	newParticipant := map[string]interface{}{
@@ -200,5 +185,20 @@ func TestAddParticipantSuccess(t *testing.T) {
 
 	if updatedGroup.Participants[1].Name != newParticipant["Name"].(string) {
 		t.Errorf("Expected participant name %s, got %s", newParticipant["Name"].(string), updatedGroup.Participants[0].Name)
+	}
+}
+
+func TestDeleteGroupSuccess(t *testing.T) {
+	createdGroup := models.CreateMockGroup()
+	w := executeRequest("DELETE", "/secret-santa/group/"+createdGroup.Id.Hex(), nil)
+
+	if w.Code != http.StatusNoContent {
+		t.Errorf("Expected status code %d, got %d", http.StatusNoContent, w.Code)
+	}
+
+	w = executeRequest("GET", "/secret-santa/group/"+createdGroup.Id.Hex(), nil)
+
+	if w.Code != http.StatusNotFound {
+		t.Errorf("Expected status code %d, got %d", http.StatusNotFound, w.Code)
 	}
 }
