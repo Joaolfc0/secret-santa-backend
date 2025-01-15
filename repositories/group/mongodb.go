@@ -59,8 +59,8 @@ func (r *resource) GetGroupByID(id string) (*models.Group, *customError.CustomEr
 
 	var group models.Group
 	err = collection.FindOne(context.Background(), bson.M{"_id": objectID}).Decode(&group)
-	fmt.Println("erro:" + err.Error())
 	if err != nil {
+		fmt.Println("erro:" + err.Error())
 		if err == mongo.ErrNoDocuments {
 			return nil, customError.NewCustomError(customError.WithNotFound("Group not found", "No group found with the given ID"))
 		}
@@ -68,11 +68,13 @@ func (r *resource) GetGroupByID(id string) (*models.Group, *customError.CustomEr
 	}
 	fmt.Println(group)
 
-	groups, err := r.GetAllGroups()
+	groups, cerr := r.GetAllGroups()
 	fmt.Println("todos os grupos: ")
 	fmt.Println(groups)
-	fmt.Println("erro: " + err.Error())
 
+	if cerr != nil {
+		fmt.Println("erro: " + cerr.Error())
+	}
 	return &group, nil
 }
 
